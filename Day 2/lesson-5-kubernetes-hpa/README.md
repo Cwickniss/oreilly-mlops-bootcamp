@@ -1,87 +1,106 @@
-
-# lesson-5-kubernetes-hpa
+# Lesson 5: Kubernetes HPA
 
 ## Autoscaling the Age Detection API using Kubernetes Horizontal Pod Autoscaler (HPA)
 
-This lesson shows how to set up **Horizontal Pod Autoscaling (HPA)** for the `detect-age-api` to automatically scale the number of pods based on CPU usage.
-
----
+This lesson shows how to set up Horizontal Pod Autoscaling (HPA) for the age-detect API to automatically scale the number of pods based on CPU usage.
 
 ## Objectives
 
-* Configure HPA to auto-scale pods between 1 and 10 replicas
-* Use `metrics-server` to track real-time CPU usage
-* Simulate traffic to trigger autoscaling
-
----
+- Configure HPA to auto-scale between 1 and 10 replicas
+- Track CPU usage using metrics-server
+- Simulate load to trigger auto-scaling behavior
 
 ## Prerequisites
 
-* A Kubernetes cluster (Minikube, Docker Desktop, etc.)
-* `kubectl` configured for your cluster
-* Working deployment from `lesson-2-kubernetes-basics`
-
----
+- A Kubernetes cluster (e.g., Docker Desktop, Minikube)
+- kubectl configured to access the cluster
+- Working deployment from previous lesson (age-detect API)
 
 ## Project Structure
 
-* `k8s-deployment.yml`: Deployment manifest for the API
-* `hpa.yaml`: HPA manifest (based on CPU utilization)
+| File | Purpose |
+|------|---------|
+| `k8s-deployment.yml` | Defines the age-detect service and deployment |
+| `hpa.yml` | HPA configuration for CPU-based scaling |
 
----
+## How to Use
 
-## How to use
+### 1. Navigate to the lesson folder:
 
-1. **Navigate to the lesson folder:**
+```bash
+cd oreilly-mlops-bootcamp/Day2/lesson-5-kubernetes-hpa
+```
 
-   ```bash
-   cd oreilly-mlops-bootcamp/Day2/lesson-5-kubernetes-hpa
-   ```
+### 2. Apply the age-detect deployment and service:
 
-2. **Ensure the age detection API is already deployed (from lesson 1):**
+```bash
+kubectl apply -f k8s-deployment.yml
+```
 
-   ```bash
-   kubectl apply -f k8s-deployment.yml
-   ```
+### 3. Install metrics-server:
 
-3. **Install metrics-server (if not already installed):**
+```bash
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+```
 
-   ```bash
-   kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.5.1/components.yaml
-   ```
+Then patch it for local clusters:
 
-4. **Apply the HPA:**
+```bash
+kubectl patch deployment metrics-server -n kube-system \
+  --type='json' \
+  -p='[
+    {"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"},
+    {"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-preferred-address-types=InternalIP,Hostname,InternalDNS,ExternalDNS,ExternalIP"}
+  ]'
 
-   ```bash
-   kubectl apply -f hpa.yaml
-   ```
+kubectl delete pod -n kube-system -l k8s-app=metrics-server
+```
 
-5. **Check HPA status:**
+### 4. Confirm metrics-server is working:
 
-   ```bash
-   kubectl get hpa
-   kubectl describe hpa detect-age-api-hpa
-   ```
+```bash
+kubectl get --raw "/apis/metrics.k8s.io/v1beta1/nodes"
+```
 
-6. **Simulate load to trigger autoscaling:**
+You should get a JSON response with node metrics.
 
-   ```bash
-   kubectl run loadgen --restart=Never --image=busybox:1.28 -- \
-     /bin/sh -c "while true; do wget -q -O- http://detect-age-api:5000/detect_age; done"
-   ```
+### 5. Apply the HPA:
 
-7. **Monitor scaling:**
+```bash
+kubectl apply -f hpa.yml
+```
 
-   ```bash
-   kubectl get pods
-   kubectl get hpa
-   ```
+### 6. Check HPA status:
 
----
+```bash
+kubectl get hpa
+kubectl describe hpa age-detect-hpa
+```
+
+### 7. Simulate load to trigger autoscaling:
+
+```bash
+kubectl run loadgen --restart=Never --image=busybox:1.28 -- \
+  /bin/sh -c "while true; do wget -q -O- http://age-detect:5000/detect_age; done"
+```
+
+### 8. Monitor autoscaling:
+
+```bash
+kubectl get hpa -w
+```
+
+And in another terminal:
+
+```bash
+kubectl get pods -w
+```
 
 ## Clean Up
 
 ```bash
-kubectl delete -f hpa.yaml
-kubectl delete -f ../lesson-1-kubernetes-basics/k8s-deployment.yml
+kubectl delete -f hpa.yml
+kubectl delete -f k8s-deployment.yml
+kubectl delete pod loadgen --ignore-not-found
 ```
+
