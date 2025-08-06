@@ -70,6 +70,37 @@
 			"response": []
 		},
 		{
+			"name": "Day 2 - Full mlops",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"age\": 39,\n  \"workclass\": \"State-gov\",\n  \"fnlwgt\": 77516,\n  \"education\": \"Bachelors\",\n  \"education-num\": 13,\n  \"marital-status\": \"Never-married\",\n  \"occupation\": \"Adm-clerical\",\n  \"relationship\": \"Not-in-family\",\n  \"race\": \"White\",\n  \"sex\": \"Male\",\n  \"capital-gain\": 0,\n  \"capital-loss\": 0,\n  \"hours-per-week\": 40,\n  \"native-country\": \"United-States\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:30800/predict",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "30800",
+					"path": [
+						"predict"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Day 2 - Age detection - k8s",
 			"request": {
 				"auth": {

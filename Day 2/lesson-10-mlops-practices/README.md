@@ -27,12 +27,6 @@ This project demonstrates a full MLOps pipeline using the UCI Adult Income datas
 
 ---
 
-## Project Structure
-
-Sure! Here's a shorter version of each item (3–4 words each) for a concise overview:
-
----
-
 ##  Project Structure 
 
 
