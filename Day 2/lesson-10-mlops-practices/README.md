@@ -120,6 +120,11 @@ This project demonstrates a full MLOps pipeline using the UCI Adult Income datas
   * `predict_exceptions_total`
   * `predict_request_latency_seconds`
 
+8. **Delete Deployments**
+
+* kubectl delete -f k8s-deployment.yaml
+* kubectl delete -f monitoring-deployment.yaml
+
 ---
 
 ## Troubleshooting
