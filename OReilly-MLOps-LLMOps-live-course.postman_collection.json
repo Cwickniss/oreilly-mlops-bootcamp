@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ac348341-69bf-4544-a2d2-426152336981",
+		"_postman_id": "7c6cc92c-88eb-4ebd-b155-6c296f717a0a",
 		"name": "OReilly-MLOps/LLMOps-live-course",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "26990366"
@@ -96,6 +96,32 @@
 					"port": "30600",
 					"path": [
 						"detect_age"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Day 2 - A/B testing",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n     \"features\": {\n       \"age\": 50,\n       \"gender\": \"Male\",\n       \"smoking_history\": \"never\",\n       \"hypertension\": 0,\n       \"heart_disease\": 0,\n       \"bmi\": 25.0,\n       \"HbA1c_level\": 6.0,\n       \"blood_glucose_level\": 140\n     },\n     \"true_label\": 1\n   }"
+				},
+				"url": {
+					"raw": "http://localhost:8000/predict",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"predict"
 					]
 				}
 			},
